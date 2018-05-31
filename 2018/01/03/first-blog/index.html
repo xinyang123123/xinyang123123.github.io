@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/title.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="思路实际开发中经常会遇到应用内截图的相关问题，如果是普通View的话我们可以使用View的绘图缓存来获取截图，但是RecyclerView和ScrollView呢就稍微有点不同了。ScrollView还好，只有一个子View，而RecyclerView中会有itemView重用的问题，只会绘制在屏幕上显示出来的itemView，因此我们可以依次获取每个itemView的视图存储到LruCache中">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 普通View截图 RecyclerView截图 ScrollView截图分享">
+<meta property="og:url" content="http://xtstars.club/2018/01/03/first-blog/index.html">
+<meta property="og:site_name" content="XinYang Blog">
+<meta property="og:description" content="思路实际开发中经常会遇到应用内截图的相关问题，如果是普通View的话我们可以使用View的绘图缓存来获取截图，但是RecyclerView和ScrollView呢就稍微有点不同了。ScrollView还好，只有一个子View，而RecyclerView中会有itemView重用的问题，只会绘制在屏幕上显示出来的itemView，因此我们可以依次获取每个itemView的视图存储到LruCache中">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-31T15:52:01.475Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 普通View截图 RecyclerView截图 ScrollView截图分享">
+<meta name="twitter:description" content="思路实际开发中经常会遇到应用内截图的相关问题，如果是普通View的话我们可以使用View的绘图缓存来获取截图，但是RecyclerView和ScrollView呢就稍微有点不同了。ScrollView还好，只有一个子View，而RecyclerView中会有itemView重用的问题，只会绘制在屏幕上显示出来的itemView，因此我们可以依次获取每个itemView的视图存储到LruCache中">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xtstars.club/2018/01/03/first-blog/"/>
+
+
+
+
+
+  <title>Android 普通View截图 RecyclerView截图 ScrollView截图分享 | XinYang Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XinYang Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xtstars.club/2018/01/03/first-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xinyang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 普通View截图 RecyclerView截图 ScrollView截图分享</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-03T23:46:30+08:00">
+                2018-01-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>实际开发中经常会遇到应用内截图的相关问题，如果是普通<code>View</code>的话我们可以使用<code>View</code>的绘图缓存来获取截图，但是<code>RecyclerView</code>和<code>ScrollView</code>呢就稍微有点不同了。<code>ScrollView</code>还好，只有一个子<code>View</code>，而<code>RecyclerView</code>中会有<code>itemView</code>重用的问题，只会绘制在屏幕上显示出来的<code>itemView</code>，因此我们可以依次获取每个<code>itemView</code>的视图存储到LruCache中，最后在进行拼装。这种方案有个问题就是如果数据过多可能会产生OOM问题，不过我测试的几百条item都还好，没有遇到。<a href="https://github.com/PGSSoft/scrollscreenshot" target="_blank" rel="noopener">思路参考自这里</a></p>
+<a id="more"></a>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><h5 id="普通View"><a href="#普通View" class="headerlink" title="普通View"></a>普通View</h5><p>普通View截图就是获取View的绘图缓存，这里的代码很简单，先看看吧：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//开启绘图缓存</span></span><br><span class="line">       view.setDrawingCacheEnabled(<span class="keyword">true</span>);</span><br><span class="line">       <span class="comment">//这个方法可调可不调，因为在getDrawingCache()里会自动判断有没有缓存有没有准备好，</span></span><br><span class="line">       <span class="comment">//如果没有，会自动调用buildDrawingCache()</span></span><br><span class="line">       view.buildDrawingCache();</span><br><span class="line">       <span class="comment">//获取绘图缓存 这里直接创建了一个新的bitmap </span></span><br><span class="line">       <span class="comment">//因为我们在最后需要释放缓存资源，会释放掉缓存中创建的bitmap对象</span></span><br><span class="line">       Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache(), <span class="number">0</span>, <span class="number">0</span>, view.getMeasuredWidth(),</span><br><span class="line">               view.getMeasuredHeight());</span><br><span class="line">       <span class="comment">//清理绘图缓存，释放资源</span></span><br><span class="line">       view.destroyDrawingCache();</span><br></pre></td></tr></table></figure></p>
+<p>可以看下<code>destroyDrawingCache()</code>方法的源码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroyDrawingCache</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mDrawingCache != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mDrawingCache.recycle();</span><br><span class="line">            mDrawingCache = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mUnscaledDrawingCache != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mUnscaledDrawingCache.recycle();</span><br><span class="line">            mUnscaledDrawingCache = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果你需要整个屏幕的截图，使用了<code>DecorView</code>来获取截图的话顶部会有状态栏的一条，可以通过获取状态栏高度，在重新创建Bitmap时截取掉。</p>
+<h5 id="RecyclerView截图"><a href="#RecyclerView截图" class="headerlink" title="RecyclerView截图"></a>RecyclerView截图</h5><p> RecyclerView的截图稍微复杂些。我们可以先获取到rv的adapter对象，通过adapter对象手动调用创建和绑定ViewHolder等方法，模拟rv的加载过程，再依次保存每个itemView的绘图缓存，最后拼装成一个完整的Bitmap。看看代码吧~</p>
+<ol>
+<li><p>获取Adapter，通过Adapter获取每个itemView的绘图缓存</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取设置的adapter</span></span><br><span class="line">       RecyclerView.Adapter adapter = view.getAdapter();</span><br><span class="line">       <span class="keyword">if</span> (adapter == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//创建保存截图的bitmap</span></span><br><span class="line">       Bitmap bigBitmap = <span class="keyword">null</span>;</span><br><span class="line">       <span class="comment">//获取item的数量</span></span><br><span class="line">       <span class="keyword">int</span> size = adapter.getItemCount();</span><br><span class="line">       <span class="comment">//recycler的完整高度 用于创建bitmap时使用</span></span><br><span class="line">       <span class="keyword">int</span> height = <span class="number">0</span>;</span><br><span class="line">       <span class="comment">//获取最大可用内存</span></span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> maxMemory = (<span class="keyword">int</span>) (Runtime.getRuntime().maxMemory() / <span class="number">1024</span>);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 使用1/8的缓存</span></span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> cacheSize = maxMemory / <span class="number">8</span>;</span><br><span class="line">       <span class="comment">//把每个item的绘图缓存存储在LruCache中</span></span><br><span class="line">       LruCache&lt;String, Bitmap&gt; bitmapCache = <span class="keyword">new</span> LruCache&lt;&gt;(cacheSize);</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">           <span class="comment">//手动调用创建和绑定ViewHolder方法，</span></span><br><span class="line">           RecyclerView.ViewHolder holder = adapter.createViewHolder(view, adapter.getItemViewType(i));</span><br><span class="line">           adapter.onBindViewHolder(holder, i);</span><br><span class="line">           <span class="comment">//测量</span></span><br><span class="line">           holder.itemView.measure(</span><br><span class="line">                   View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),</span><br><span class="line">                   View.MeasureSpec.makeMeasureSpec(<span class="number">0</span>, View.MeasureSpec.UNSPECIFIED));</span><br><span class="line">           <span class="comment">//布局</span></span><br><span class="line">           holder.itemView.layout(<span class="number">0</span>, <span class="number">0</span>, holder.itemView.getMeasuredWidth(),</span><br><span class="line">                   holder.itemView.getMeasuredHeight());</span><br><span class="line">           <span class="comment">//开启绘图缓存</span></span><br><span class="line">           holder.itemView.setDrawingCacheEnabled(<span class="keyword">true</span>);</span><br><span class="line">           holder.itemView.buildDrawingCache();</span><br><span class="line">           Bitmap drawingCache = holder.itemView.getDrawingCache();</span><br><span class="line">           <span class="keyword">if</span> (drawingCache != <span class="keyword">null</span>) &#123;</span><br><span class="line">               bitmapCache.put(String.valueOf(i), drawingCache);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">//获取itemView的实际高度并累加</span></span><br><span class="line">           height += holder.itemView.getMeasuredHeight();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建保存截图的Bitmap 把保存的itemView绘图缓存画上去</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//根据计算出的recyclerView高度创建bitmap</span></span><br><span class="line">       bigBitmap = Bitmap.createBitmap(view.getMeasuredWidth(), height, Bitmap.Config.RGB_565);</span><br><span class="line">       <span class="comment">//创建一个canvas画板</span></span><br><span class="line">       Canvas canvas = <span class="keyword">new</span> Canvas(bigBitmap);</span><br><span class="line">       <span class="comment">//获取recyclerView的背景颜色</span></span><br><span class="line">       Drawable background = view.getBackground();</span><br><span class="line">       <span class="comment">//画出recyclerView的背景色 这里只用了color一种 有需要也可以自己扩展</span></span><br><span class="line">       <span class="keyword">if</span> (background <span class="keyword">instanceof</span> ColorDrawable) &#123;</span><br><span class="line">           ColorDrawable colorDrawable = (ColorDrawable) background;</span><br><span class="line">           <span class="keyword">int</span> color = colorDrawable.getColor();</span><br><span class="line">           canvas.drawColor(color);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//当前bitmap的高度</span></span><br><span class="line">       <span class="keyword">int</span> top = <span class="number">0</span>;</span><br><span class="line">       <span class="comment">//画笔</span></span><br><span class="line">       Paint paint = <span class="keyword">new</span> Paint();</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">           Bitmap bitmap = bitmapCache.get(String.valueOf(i));</span><br><span class="line">           canvas.drawBitmap(bitmap, <span class="number">0f</span>, top, paint);</span><br><span class="line">           top += bitmap.getHeight();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="ScrollView截图"><a href="#ScrollView截图" class="headerlink" title="ScrollView截图"></a>ScrollView截图</h5><p>ScrollView的截图也比较简单，获取到子View的高度就好，而ScrollView只允许又一个子View。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> height = <span class="number">0</span>;</span><br><span class="line">       <span class="comment">//理论上scrollView只会有一个子View啦</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; view.getChildCount(); i++) &#123;</span><br><span class="line">           height += view.getChildAt(i).getHeight();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//创建保存缓存的bitmap</span></span><br><span class="line">       Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), height, Bitmap.Config.RGB_565);</span><br><span class="line">       <span class="comment">//可以简单的把Canvas理解为一个画板 而bitmap就是块画布</span></span><br><span class="line">       Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);</span><br><span class="line">       <span class="comment">//获取ScrollView的背景颜色</span></span><br><span class="line">       Drawable background = view.getBackground();</span><br><span class="line">       <span class="comment">//画出ScrollView的背景色 这里只用了color一种 有需要也可以自己扩展 也可以自己直接指定一种背景色</span></span><br><span class="line">       <span class="keyword">if</span> (background <span class="keyword">instanceof</span> ColorDrawable) &#123;</span><br><span class="line">           ColorDrawable colorDrawable = (ColorDrawable) background;</span><br><span class="line">           <span class="keyword">int</span> color = colorDrawable.getColor();</span><br><span class="line">           canvas.drawColor(color);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//把view的内容都画到指定的画板Canvas上</span></span><br><span class="line">       view.draw(canvas);</span><br><span class="line">       <span class="keyword">return</span> bitmap;</span><br></pre></td></tr></table></figure></p>
+<h5 id="关于Bitmap的recycle-方法"><a href="#关于Bitmap的recycle-方法" class="headerlink" title="关于Bitmap的recycle()方法"></a>关于Bitmap的<code>recycle()</code>方法</h5><p>很多人以为这个释放资源的方法是必须调用的。其实不然，在<code>2.3</code>之后可以完全交由GC管理。具体的解释可以参见官方注释</p>
+<blockquote>
+<p>Free the native object associated with this bitmap, and clear the<br>reference to the pixel data. This will not free the pixel data synchronously;<br>it simply allows it to be garbage collected if there are no other references.<br>The bitmap is marked as “dead”, meaning it will throw an exception if<br>getPixels() or setPixels() is called, and will draw nothing. This operation<br>cannot be reversed, so it should only be called if you are sure there are no<br>further uses for the bitmap. This is an advanced call, and normally need<br>not be called, since the normal GC process will free up this memory when<br>there are no more references to this bitmap.</p>
+</blockquote>
+<p>或者医生的这篇博客<a href="http://blog.csdn.net/eclipsexys/article/details/50581162" target="_blank" rel="noopener">Bitmap.recycle引发的血案</a></p>
+<p><a href="https://github.com/xinyang123123/AndroidDemo" target="_blank" rel="noopener">下载源码点击这里</a> 如有错误或不当的地方还请大佬们指出</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="xinyang" />
+          <p class="site-author-name" itemprop="name">xinyang</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xinyang123123" target="_blank" title="Github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Github
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://juejin.im/user/58398fc7128fe1006ab2b38d" target="_blank" title="掘金">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      掘金
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#普通View"><span class="nav-number">2.0.1.</span> <span class="nav-text">普通View</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RecyclerView截图"><span class="nav-number">2.0.2.</span> <span class="nav-text">RecyclerView截图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScrollView截图"><span class="nav-number">2.0.3.</span> <span class="nav-text">ScrollView截图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关于Bitmap的recycle-方法"><span class="nav-number">2.0.4.</span> <span class="nav-text">关于Bitmap的recycle()方法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xinyang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
