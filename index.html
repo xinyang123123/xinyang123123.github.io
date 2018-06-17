@@ -290,7 +290,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://xinyang123123.github.io/blog/2018/01/03/first-blog/">
+    <link itemprop="mainEntityOfPage" href="https://xinyang123123.github.io/blog/2018/06/17/Hexo-Github搭建个人博客（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="信仰">
@@ -309,7 +309,153 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/03/first-blog/" itemprop="url">Android 普通View截图 RecyclerView截图 ScrollView截图分享</a></h1>
+                <a class="post-title-link" href="/2018/06/17/Hexo-Github搭建个人博客（一）/" itemprop="url">Hexo+Github搭建个人博客（一）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-17T12:35:17+08:00">
+                2018-06-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>经常在查看技术文章时跳转到大佬们的个人博客，看起来很酷很炫。也想自己搭一个。嗯，于是有了这篇博客。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/06/17/Hexo-Github搭建个人博客（一）/" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xinyang123123.github.io/blog/2018/01/03/Android 普通View截图 RecyclerView截图 ScrollView截图分享/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="信仰">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/03/Android 普通View截图 RecyclerView截图 ScrollView截图分享/" itemprop="url">Android 普通View截图 RecyclerView截图 ScrollView截图分享</a></h1>
         
 
         <div class="post-meta">
@@ -331,6 +477,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -363,7 +531,7 @@
           <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>实际开发中经常会遇到应用内截图的相关问题，如果是普通<code>View</code>的话我们可以使用<code>View</code>的绘图缓存来获取截图，但是<code>RecyclerView</code>和<code>ScrollView</code>呢就稍微有点不同了。<code>ScrollView</code>还好，只有一个子<code>View</code>，而<code>RecyclerView</code>中会有<code>itemView</code>重用的问题，只会绘制在屏幕上显示出来的<code>itemView</code>，因此我们可以依次获取每个<code>itemView</code>的视图存储到LruCache中，最后在进行拼装。这种方案有个问题就是如果数据过多可能会产生OOM问题，不过我测试的几百条item都还好，没有遇到。<a href="https://github.com/PGSSoft/scrollscreenshot" target="_blank" rel="noopener">思路参考自这里</a></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/03/first-blog/" rel="contents">
+            <a class="btn" href="/2018/01/03/Android 普通View截图 RecyclerView截图 ScrollView截图分享/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -449,22 +617,31 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
           
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
           
             
             
             <div class="site-state-item site-state-tags">
-              
-                <span class="site-state-item-count">1</span>
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
-              
+              </a>
             </div>
           
 
