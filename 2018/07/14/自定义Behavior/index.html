@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/title.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Behavior是CoordinatorLayout的核心，系统提供了一些实现好的效果，如ScrollingViewBehavior、BottomSheetBehavior、SwipeDismissBehavior等，但想要根据业务要求实现一些复杂的效果，还是需要掌握自定义Behavior。">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义Behavior">
+<meta property="og:url" content="https://xtstars.club/blog/2018/07/14/自定义Behavior/index.html">
+<meta property="og:site_name" content="XinYang Blog">
+<meta property="og:description" content="Behavior是CoordinatorLayout的核心，系统提供了一些实现好的效果，如ScrollingViewBehavior、BottomSheetBehavior、SwipeDismissBehavior等，但想要根据业务要求实现一些复杂的效果，还是需要掌握自定义Behavior。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-14T15:51:53.286Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义Behavior">
+<meta name="twitter:description" content="Behavior是CoordinatorLayout的核心，系统提供了一些实现好的效果，如ScrollingViewBehavior、BottomSheetBehavior、SwipeDismissBehavior等，但想要根据业务要求实现一些复杂的效果，还是需要掌握自定义Behavior。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xtstars.club/blog/2018/07/14/自定义Behavior/"/>
+
+
+
+
+
+  <title>自定义Behavior | XinYang Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XinYang Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xtstars.club/blog/2018/07/14/自定义Behavior/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="信仰">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义Behavior</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-14T23:46:30+08:00">
+                2018-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Behavior是CoordinatorLayout的核心，系统提供了一些实现好的效果，如ScrollingViewBehavior、BottomSheetBehavior、SwipeDismissBehavior等，但想要根据业务要求实现一些复杂的效果，还是需要掌握自定义Behavior。<br><a id="more"></a></p>
+<h2 id="如何自定义Behavior"><a href="#如何自定义Behavior" class="headerlink" title="如何自定义Behavior"></a>如何自定义Behavior</h2><p>自定义Behavior有两种方式,当然都需要继承<code>CoordinatorLayout.Behavior&lt;子View类型&gt;</code>，都必须实现有参构造：</p>
+<ol>
+<li>指定View依赖于某个View，监听被依赖View的状态变化,如大小、位置、显示状态等，根据被依赖View的变化来做出相应变化，较为简单；</li>
+<li>通过NestedScrolling 机制，重写相关回调方法来处理滑动事件，比较复杂。但相对于自定义View，这样做更解耦，灵活。</li>
+</ol>
+<h3 id="依赖View方式"><a href="#依赖View方式" class="headerlink" title="依赖View方式"></a>依赖View方式</h3><ol>
+<li>重写<code>layoutDependsOn()</code>,在该方法中判断传入的View<code>dependency</code>是否是我们想要的被依赖View,代码如下:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public boolean layoutDependsOn(CoordinatorLayout parent, ImageView child, View dependency) &#123;</span><br><span class="line"></span><br><span class="line">    //也可以通过过id判断 是则返回true 不是false</span><br><span class="line">    return dependency instanceof NestedScrollView;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>重写 <code>onDependentViewChanged()</code>, 如果上一个方法中返回true确定了依赖关系,那么被依赖View状态发生变化时就会走到该方法中,我们在这里可以根据被依赖View的状态对子View做出相应改变,如果改变了子View的状态,则需要返回true,否则返回false,代码如下:</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean onDependentViewChanged(CoordinatorLayout parent, ImageView child, View dependency) &#123;</span><br><span class="line"></span><br><span class="line">    //获取被依赖View的Y轴偏移量</span><br><span class="line">    float translationY = dependency.getTranslationY();</span><br><span class="line"></span><br><span class="line">    //根据偏移量计算子View需要调整的透明度</span><br><span class="line">    float alpha = translationY / getHeaderHeight();</span><br><span class="line"></span><br><span class="line">    //改变子View透明度</span><br><span class="line">    child.setAlpha(alpha);</span><br><span class="line"></span><br><span class="line">    //改变了子View状态 返回true 反之false</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="自定义滑动控制"><a href="#自定义滑动控制" class="headerlink" title="自定义滑动控制"></a>自定义滑动控制</h3><p>先了解下几个重要的方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> *  可以重写这个方法对子View 进行重新布局</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public boolean onLayoutChild(CoordinatorLayout parent, View child, int layoutDirection) &#123;</span><br><span class="line">    return super.onLayoutChild(parent, child, layoutDirection);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> *  当coordinatorLayout 的子View试图开始嵌套滑动的时候被调用。当返回值为true的时候表明</span><br><span class="line"> *  coordinatorLayout 充当nested scroll parent 处理这次滑动，需要注意的是只有当返回值为true</span><br><span class="line"> *  的时候，Behavior 才能收到后面的一些nested scroll 事件回调（如：onNestedPreScroll、onNestedScroll等）</span><br><span class="line"> *  这个方法有个重要的参数nestedScrollAxes，表明处理的滑动的方向。</span><br><span class="line"> *</span><br><span class="line"> * @param coordinatorLayout 和Behavior 绑定的View的父CoordinatorLayout</span><br><span class="line"> * @param child  和Behavior 绑定的View</span><br><span class="line"> * @param directTargetChild</span><br><span class="line"> * @param target</span><br><span class="line"> * @param nestedScrollAxes 嵌套滑动 应用的滑动方向，看 &#123;@link ViewCompat#SCROLL_AXIS_HORIZONTAL&#125;,</span><br><span class="line"> *                         &#123;@link ViewCompat#SCROLL_AXIS_VERTICAL&#125;</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, View child, View            directTargetChild, View target, int nestedScrollAxes) &#123;</span><br><span class="line">    return super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 嵌套滚动发生之前被调用</span><br><span class="line"> * 在nested scroll child 消费掉自己的滚动距离之前，嵌套滚动每次被nested scroll child</span><br><span class="line"> * 更新都会调用onNestedPreScroll。注意有个重要的参数consumed，可以修改这个数组表示你消费</span><br><span class="line"> * 了多少距离。假设用户滑动了100px,child 做了90px 的位移，你需要把 consumed［1］的值改成90，</span><br><span class="line"> * 这样coordinatorLayout就能知道只处理剩下的10px的滚动。</span><br><span class="line"> * @param coordinatorLayout</span><br><span class="line"> * @param child</span><br><span class="line"> * @param target</span><br><span class="line"> * @param dx  用户水平方向的滚动距离</span><br><span class="line"> * @param dy  用户竖直方向的滚动距离</span><br><span class="line"> * @param consumed</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dx, int dy, int[] consumed) &#123;</span><br><span class="line">    super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 进行嵌套滚动时被调用</span><br><span class="line"> * @param coordinatorLayout</span><br><span class="line"> * @param child</span><br><span class="line"> * @param target</span><br><span class="line"> * @param dxConsumed target 已经消费的x方向的距离</span><br><span class="line"> * @param dyConsumed target 已经消费的y方向的距离</span><br><span class="line"> * @param dxUnconsumed x 方向剩下的滚动距离</span><br><span class="line"> * @param dyUnconsumed y 方向剩下的滚动距离</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void onNestedScroll(CoordinatorLayout coordinatorLayout, View child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) &#123;</span><br><span class="line">    super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> *  嵌套滚动结束时被调用，这是一个清除滚动状态等的好时机。</span><br><span class="line"> * @param coordinatorLayout</span><br><span class="line"> * @param child</span><br><span class="line"> * @param target</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, View child, View target) &#123;</span><br><span class="line">    super.onStopNestedScroll(coordinatorLayout, child, target);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * onStartNestedScroll返回true才会触发这个方法，接受滚动处理后回调，可以在这个</span><br><span class="line"> * 方法里做一些准备工作，如一些状态的重置等。</span><br><span class="line"> * @param coordinatorLayout</span><br><span class="line"> * @param child</span><br><span class="line"> * @param directTargetChild</span><br><span class="line"> * @param target</span><br><span class="line"> * @param nestedScrollAxes</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void onNestedScrollAccepted(CoordinatorLayout coordinatorLayout, View child, View directTargetChild, View target, int nestedScrollAxes) &#123;</span><br><span class="line">    super.onNestedScrollAccepted(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 用户松开手指并且会发生惯性动作之前调用，参数提供了速度信息，可以根据这些速度信息</span><br><span class="line"> * 决定最终状态，比如滚动Header，是让Header处于展开状态还是折叠状态。返回true 表</span><br><span class="line"> * 示消费了fling.</span><br><span class="line"> *</span><br><span class="line"> * @param coordinatorLayout</span><br><span class="line"> * @param child</span><br><span class="line"> * @param target</span><br><span class="line"> * @param velocityX x 方向的速度</span><br><span class="line"> * @param velocityY y 方向的速度</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, View child, View target, float velocityX, float velocityY) &#123;</span><br><span class="line">    return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简单来说就是在<code>onStartNestedScroll()</code>中判断是否需要处理该事件,<strong>需要在子View处理之前处理</strong>的业务放在<code>onNestedPreScroll()</code>中,这里切记要把消费掉的事件距离放在consumed[]中,consumed[0]对应dx,consumed[1]对应dy,<code>onNestedScroll()</code>是在嵌套滑动时被调用的,参数中有子View已消耗和未消耗的事件值。</p>
+<blockquote>
+<p>dy &gt; 0 向上滑动  dy &lt; 0 向下滑动</p>
+</blockquote>
+<p>具体还是要根据不同情况进行分析拆解，确定依赖关系，控制滑动等。</p>
+<p><strong>参考</strong>:</p>
+<p><a href="https://www.jianshu.com/p/f7989a2a3ec2" target="_blank" rel="noopener">自定义Behavior的艺术探索-仿UC浏览器主页</a></p>
+<p><a href="https://www.jianshu.com/p/82d18b0d18f4" target="_blank" rel="noopener">Material Design 之 Behavior的使用和自定义Behavior</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/11/ToolBar&AppbarLayout/" rel="next" title="ToolBar&AppbarLayout">
+                <i class="fa fa-chevron-left"></i> ToolBar&AppbarLayout
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="信仰" />
+          <p class="site-author-name" itemprop="name">信仰</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xinyang123123" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github-alt"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://juejin.im/user/58398fc7128fe1006ab2b38d" target="_blank" title="掘金">
+                  
+                    <i class="fa fa-fw fa-rss"></i>
+                  
+                    
+                      掘金
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何自定义Behavior"><span class="nav-number">1.</span> <span class="nav-text">如何自定义Behavior</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖View方式"><span class="nav-number">1.1.</span> <span class="nav-text">依赖View方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义滑动控制"><span class="nav-number">1.2.</span> <span class="nav-text">自定义滑动控制</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">信仰</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

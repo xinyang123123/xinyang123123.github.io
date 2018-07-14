@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/title.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Toolbartoolbar使用来替代ActionBar的,更灵活,也更符合md设计规范. 如何使用? 替换主题为NoActionBar系列 xml中加入toolbar控件">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ToolBar&amp;AppbarLayout">
+<meta property="og:url" content="https://xtstars.club/blog/2018/07/11/ToolBar&AppbarLayout/index.html">
+<meta property="og:site_name" content="XinYang Blog">
+<meta property="og:description" content="Toolbartoolbar使用来替代ActionBar的,更灵活,也更符合md设计规范. 如何使用? 替换主题为NoActionBar系列 xml中加入toolbar控件">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-14T15:47:57.497Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ToolBar&amp;AppbarLayout">
+<meta name="twitter:description" content="Toolbartoolbar使用来替代ActionBar的,更灵活,也更符合md设计规范. 如何使用? 替换主题为NoActionBar系列 xml中加入toolbar控件">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xtstars.club/blog/2018/07/11/ToolBar&AppbarLayout/"/>
+
+
+
+
+
+  <title>ToolBar&AppbarLayout | XinYang Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XinYang Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xtstars.club/blog/2018/07/11/ToolBar&AppbarLayout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="信仰">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ToolBar&AppbarLayout</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-11T12:35:17+08:00">
+                2018-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Toolbar"><a href="#Toolbar" class="headerlink" title="Toolbar"></a>Toolbar</h2><p>toolbar使用来替代ActionBar的,更灵活,也更符合md设计规范.</p>
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用?"></a>如何使用?</h3><ol>
+<li>替换主题为NoActionBar系列</li>
+<li>xml中加入toolbar控件<a id="more"></a></li>
+<li>activity中使用 <code>setSupportActionBar(toolbar);</code>替换ActionBar</li>
+<li>设置相应属性咋可使用 <code>getSupportActionBar()</code>来获取ActionBar实例</li>
+<li><p>设置toolBar上的menu需要在res文件夹下新建menu文件夹,新建相应的menu资源文件,插入相应的item项,指定id、icon(显示的图标)、title(显示的文字)、showAsAction(item位置,要用app做命名空间,保证向下兼容),可接受的值有:</p>
+<ul>
+<li><p>always：使菜单项一直显示在ToolBar上</p>
+</li>
+<li><p>ifRoom：如果有足够的空间，这个值会使菜单项显示在ToolBar上</p>
+</li>
+<li><p>never：使菜单项永远都不出现在ToolBar上,在…的子项中显示</p>
+</li>
+<li><p>withText：使菜单项和它的图标，菜单文本一起显示 </p>
+</li>
+</ul>
+</li>
+<li>重写 <code>onCreateOptionsMenu()</code> 在其中加入 <code>getMenuInflater().inflate(R.menu.menu_home, menu);</code>来引入menu资源</li>
+<li>重写<code>onOptionsItemSelected()</code>来处理item点击事件</li>
+</ol>
+<h3 id="自定义toolbar菜单样式"><a href="#自定义toolbar菜单样式" class="headerlink" title="自定义toolbar菜单样式"></a>自定义toolbar菜单样式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;style name=&quot;ToolbarTheme&quot; parent=&quot;Theme.AppCompat.Light&quot;&gt;</span><br><span class="line">        &lt;!-- 更换Toolbar OVerFlow menu icon --&gt;s</span><br><span class="line">      &lt;item name=&quot;actionOverflowButtonStyle&quot;&gt;@style/OverFlowIcon&lt;/item&gt;</span><br><span class="line">        &lt;!-- 设置 toolbar 溢出菜单的文字的颜色 --&gt;</span><br><span class="line">      &lt;item name=&quot;android:textColor&quot;&gt;@android:color/holo_red_dark&lt;/item&gt;</span><br><span class="line">        &lt;!-- 设置 显示在toobar上菜单文字的颜色 --&gt;</span><br><span class="line">      &lt;item name=&quot;actionMenuTextColor&quot;&gt;@android:color/white&lt;/item&gt;</span><br><span class="line">        &lt;!-- 设置toolbar 弹出菜单的字体大小和溢出菜单文字大小--&gt;</span><br><span class="line">      &lt;item name=&quot;android:textSize&quot;&gt;15sp&lt;/item&gt;</span><br><span class="line">    &lt;/style&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;android.support.v7.widget.Toolbar</span><br><span class="line">      android:id=&quot;@+id/tool_bar&quot;</span><br><span class="line">      android:layout_width=&quot;match_parent&quot;</span><br><span class="line">      android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">      android:background=&quot;@color/colorPrimary&quot;</span><br><span class="line">      toolbar:navigationIcon=&quot;@mipmap/navigation_back_white&quot;</span><br><span class="line">      toolbar:title=&quot;@string/toolbar_title&quot;</span><br><span class="line">      toolbar:titleTextColor=&quot;@color/white&quot;</span><br><span class="line">      android:theme=&quot;@style/ToolbarTheme&quot;</span><br><span class="line">      &gt;</span><br><span class="line"></span><br><span class="line">  &lt;/android.support.v7.widget.Toolbar&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="CoordinatorLayout"><a href="#CoordinatorLayout" class="headerlink" title="CoordinatorLayout"></a>CoordinatorLayout</h2><p>这个可以说是重中之重,可以协调子View，而这些子View 的具体响应动作是通过 <code>behavior</code>来指定的。可以结合<code>AppbarLayout</code>、<code>CollapsingToolbarLayout</code>等一起使用,常见于各种首页、详情页，也可以通过自定义<code>Behavior</code>来定制想要的动作,灵活好用。</p>
+<h2 id="AppbarLayout"><a href="#AppbarLayout" class="headerlink" title="AppbarLayout"></a>AppbarLayout</h2><p>AppbarLayout继承自LinearLayout,它就是一个垂直方向的LinearLayout,在LinearLayout的基础上添加了一些材料设计的概念和特性，即滑动手势。它可以让你定制在某个可滑动的View（如：ScrollView ,ListView ,RecyclerView 等）滑动手势发生改变时，内部的子View 该做什么动作。子View应该提供滑动时他们期望的响应的动作Behavior,通过setScrollFlags(int)，或者xml 中使用属性： <code>app:layout_scrollFlags</code></p>
+<blockquote>
+<p>注意：AppbarLayout 严重依赖于CoordinatorLayout，必须用于CoordinatorLayout 的直接子View，如果你将AppbarLayout 放在其他的ViewGroup 里面，那么它的这些功能是无效的。</p>
+</blockquote>
+<h3 id="AppbarLayout-子View-的几种动作"><a href="#AppbarLayout-子View-的几种动作" class="headerlink" title="AppbarLayout 子View 的几种动作"></a>AppbarLayout 子View 的几种动作</h3><ol>
+<li><p><strong>scroll</strong> View将会随着可滚动View（如：ScrollView,以下都会用ScrollView 来代替可滚动的View ）一起滚动，就好像子View 是属于ScrollView的一部分一样。</p>
+</li>
+<li><p><strong>enterAlways</strong>  当ScrollView 向下滑动时，子View 将直接向下滑动，而不管ScrollView 是否在滑动。注意：要与scroll 搭配使用，否者是不能滑动的。</p>
+</li>
+<li><p><strong>enterAlwaysCollapsed</strong> enterAlwaysCollapsed 是对enterAlways 的补充，当ScrollView 向下滑动的时候，滑动View（也就是设置了enterAlwaysCollapsed 的View）下滑至折叠的高度，当ScrollView 到达滑动范围的结束值的时候，滑动View剩下的部分开始滑动。这个折叠的高度是通过View的minimum height （最小高度）指定的。</p>
+</li>
+<li><p><strong>exitUntilCollapsed</strong> 当ScrollView 滑出屏幕时（也就时向上滑动时），滑动View先响应滑动事件，滑动至折叠高度，也就是通过minimum height 设置的最小高度后，就固定不动了，再把滑动事件交给 scrollview 继续滑动。</p>
+</li>
+<li><p><strong>snap</strong>在滚动结束后，如果view只是部分可见，它将滑动到最近的边界。比如，如果view的底部只有25%可见，它将滚动离开屏幕，而如果底部有75%可见，它将滚动到完全显示。</p>
+</li>
+</ol>
+<h2 id="CollapsingToolbarLayout"><a href="#CollapsingToolbarLayout" class="headerlink" title="CollapsingToolbarLayout"></a>CollapsingToolbarLayout</h2><p>CollapsingToolbarLayout 是对Toolbar的包装并且实现了折叠app bar效果，使用时，要作为 AppbarLayout 的直接子View。<br>CollapsingToolbarLayout有以下特性：</p>
+<ol>
+<li><p><strong>Collapsing title(折叠标题)</strong> 当布局全部可见的时候，title 是最大的，当布局开始滑出屏幕，title 将变得越来越小，你可以通过setTitle（CharSequence） 来设置要显示的标题。</p>
+<blockquote>
+<p>注意：Toolbar 和CollapsingToolbarLayout 同时设置了title时，不会显示Toolbartitle而是显示CollapsingToolbarLayout 的title，如果要显示Toolbar 的title，你可一在代码中添加如下代码：</p>
+</blockquote>
+<figure class="highlight plain"><figcaption><span>```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2. **Content scrim(内容纱布)** 当CollapsingToolbarLayout滑动到一个确定的阀值时将显示或者隐藏内容纱布，可以通过setContentScrim(Drawable)来设置纱布的图片。</span><br><span class="line"></span><br><span class="line">3.  **Status bar scrim（状态栏纱布）** 当CollapsingToolbarLayout滑动到一个确定的阀值时，状态栏显示或隐藏纱布，你可以通过setStatusBarScrim(Drawable)来设置纱布图片。</span><br><span class="line"></span><br><span class="line">4. **Parallax scrolling children（有视差地滚动子View）** 让CollapsingToolbarLayout 的子View 可以有视差的滚动，需要在xml中用 添加如下代码：``` app:layout_collapseMode=&quot;parallax&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Pinned position children（固定子View的位置）</strong>子View可以固定在全局空间内，这对于实现了折叠并且允许通过滚动布局来固定Toolbar 这种情况非常有用。在xml 中将collapseMode设为pin，代码如下:<code>app:layout_collapseMode=&quot;pin&quot;</code></p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说，CoordinatorLayout 是协调子View的，通过Behavior指定子View动作。AppbarLayout就是一个竖直方向的LinearLayout,只不过它添加了一些材料的概念和特性，可以定制子View的滑动。CollapsingToolbarLayout 是对Toolbar 的包装，它有5个特性，Collapsing title、Content scrim、Status bar scrim、Parallax scrolling children、Pinned position children。这个三个View配合使用，可以做出一些很炫酷的UI效果。需要注意的是：<strong>AppbarLayout 要作为CoordinatorLayout 的直接子View使用，而CollapsingToolbarLayout 要作为AppbarLayout 的直接子View 使用，否则，上面将的特性是没有效果的。</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/01/七月小记/" rel="next" title="七月小记">
+                <i class="fa fa-chevron-left"></i> 七月小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/14/自定义Behavior/" rel="prev" title="自定义Behavior">
+                自定义Behavior <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="信仰" />
+          <p class="site-author-name" itemprop="name">信仰</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xinyang123123" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github-alt"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://juejin.im/user/58398fc7128fe1006ab2b38d" target="_blank" title="掘金">
+                  
+                    <i class="fa fa-fw fa-rss"></i>
+                  
+                    
+                      掘金
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Toolbar"><span class="nav-number">1.</span> <span class="nav-text">Toolbar</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何使用"><span class="nav-number">1.1.</span> <span class="nav-text">如何使用?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义toolbar菜单样式"><span class="nav-number">1.2.</span> <span class="nav-text">自定义toolbar菜单样式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CoordinatorLayout"><span class="nav-number">2.</span> <span class="nav-text">CoordinatorLayout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AppbarLayout"><span class="nav-number">3.</span> <span class="nav-text">AppbarLayout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AppbarLayout-子View-的几种动作"><span class="nav-number">3.1.</span> <span class="nav-text">AppbarLayout 子View 的几种动作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CollapsingToolbarLayout"><span class="nav-number">4.</span> <span class="nav-text">CollapsingToolbarLayout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">信仰</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
