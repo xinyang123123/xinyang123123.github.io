@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/title.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android属性动画">
+<meta property="og:url" content="https://xinyang123123.github.io/blog/2018/07/27/Android属性动画/index.html">
+<meta property="og:site_name" content="XinYang Blog">
+<meta property="og:description" content="动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-27T07:18:59.461Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android属性动画">
+<meta name="twitter:description" content="动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xinyang123123.github.io/blog/2018/07/27/Android属性动画/"/>
+
+
+
+
+
+  <title>Android属性动画 | XinYang Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XinYang Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xinyang123123.github.io/blog/2018/07/27/Android属性动画/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="信仰">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android属性动画</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T15:16:30+08:00">
+                2018-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.<br><a id="more"></a></p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>顾名思义,属性动画就是通过改变View某些属性值而产生动画效果.通过设置好的目标值及动画时间等参数,系统会帮我们计算好某个时间对应的属性值,甚至在<code>ViewPropertyAnimator</code>和<code>ObjectAnimator</code>中会直接帮我们更新计算后的属性值.</p>
+<p>系统为我们提供了三种使用属性动画的API,分别是<code>ViewPropertyAnimator</code>,<code>ObjectAnimator</code>,<code>ValueAnimator</code>,从使用复杂度来说一种比一种复杂,但也更灵活.</p>
+<h3 id="ViewPropertyAnimator"><a href="#ViewPropertyAnimator" class="headerlink" title="ViewPropertyAnimator"></a>ViewPropertyAnimator</h3><p><code>ViewPropertyAnimator</code>的使用是最简单的,通过view自带的<code>animate()</code>来获取一个<code>ViewPropertyAnimator</code>对象来进行动画操作,代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">view.animate()</span><br><span class="line">    .alpha(1)   //透明度</span><br><span class="line">    .scaleX(1)  //x轴缩放比例</span><br><span class="line">    .scaleY(1)  //y轴缩放比例</span><br><span class="line">    .translationX(600)  //x轴平移距离</span><br><span class="line">    .translationY(600)  //y轴屏蔽距离</span><br><span class="line">    .rotation(360);     //旋转角度</span><br></pre></td></tr></table></figure>
+<p>简单吧,获取到<code>ViewPropertyAnimator</code>对象后只要一行代码就可以开启相应的动画效果,当然也可以设置动画持续时间<code>setDuration()</code>,设置监听,通过<code>withStartAction()</code>,<code>withStartAction()</code>方法可以为动画在开始前和结束后设置对应任务,这两个with方法与监听中回调的<code>onAnimationStart() /  onAnimationEnd()</code>有两点不同:</p>
+<pre><code>1. withStartAction() / withEndAction() 是一次性的，在动画执行结束后就自动弃掉了，就算之后再重用  ViewPropertyAnimator 来做别的动画，用它们设置的回调也不会再被调用。而 set/addListener() 所设置的 AnimatorListener 是持续有效的，当动画重复执行时，回调总会被调用.
+2. withEndAction() 设置的回调只有在动画正常结束时才会被调用，而在动画被取消时不会被执行。这点和 AnimatorListener.onAnimationEnd() 的行为是不一致的.
+</code></pre><p><code>ViewPropertyAnimator</code>的使用虽然简单方便,但却只能使用几种系统提供好的方法,针对一些特殊或是复杂动画则无能为力,这时我们就可以了解下<code>ObjectAnimator</code>;</p>
+<h3 id="ObjectAnimator"><a href="#ObjectAnimator" class="headerlink" title="ObjectAnimator"></a>ObjectAnimator</h3><p><code>ObjectAnimator</code>通过一系列<code>ofXXX()</code>方法来创建实例,xxx代表的就是在动画期间生成的值类型,要与第二个参数传入的字段类型相对应,代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//参数1表示动画要作用的view对象</span><br><span class="line"></span><br><span class="line">//参数2表示要赋值的字段名称,但这里并不会直接修改对应变量值,而是通过set方法来更新,所以这里说是字段名,其实是对应的setXXX方法名,但一般来说XXX字段的set方法都是setXXX.注意要在对应set方法中调用invalidate(),以便在属性值发生变化后重绘.</span><br><span class="line"></span><br><span class="line">//参数3是一组可变参数,表示属性值的变化过程</span><br><span class="line">ObjectAnimator animator = ObjectAnimator.ofFloat(view, &quot;progress&quot;, 0,65);</span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure>
+<p>以上就是<code>ObjectAnimator</code>的基本使用,一定要注意参数二的概念及在对应set方法中调用<code>invalidate()</code>,再来看看它的一些功能.</p>
+<ol>
+<li>使用 PropertyValuesHolder 来对多个属性同时做动画；</li>
+<li>使用 AnimatorSet 来同时管理调配多个动画；</li>
+<li>PropertyValuesHolder 的进阶使用：使用 PropertyValuesHolder.ofKeyframe() 来把一个属性拆分成多段，执行更加精细的属性动画。</li>
+</ol>
+<h4 id="PropertyValuesHolder-同一个动画中改变多个属性"><a href="#PropertyValuesHolder-同一个动画中改变多个属性" class="headerlink" title="PropertyValuesHolder 同一个动画中改变多个属性"></a>PropertyValuesHolder 同一个动画中改变多个属性</h4><p>我们可能经常需要在一个动画中改变多个属性,这在<code>ViewPropertyAnimator</code>是很方便操作的,但<code>ObjectAnimator</code>中稍有不同,他不支持直接设置多个属性,但提供了<code>PropertyValuesHolder</code>来实现这种操作:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PropertyValuesHolder holder1 = PropertyValuesHolder.ofFloat(&quot;scaleX&quot;, 1);  </span><br><span class="line">PropertyValuesHolder holder2 = PropertyValuesHolder.ofFloat(&quot;scaleY&quot;, 1);  </span><br><span class="line">PropertyValuesHolder holder3 = PropertyValuesHolder.ofFloat(&quot;alpha&quot;, 1);</span><br><span class="line"></span><br><span class="line">ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view, holder1, holder2, holder3)  </span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure></p>
+<h4 id="AnimatorSet-多个动画配合执行"><a href="#AnimatorSet-多个动画配合执行" class="headerlink" title="AnimatorSet 多个动画配合执行"></a>AnimatorSet 多个动画配合执行</h4><p>有的时候，我们不止需要在一个动画中改变多个属性，还会需要多个动画配合工作，比如，在内容的大小从 0 放大到 100% 大小<strong>后</strong>开始移动。这种情况使用 PropertyValuesHolder 是不行的，因为这些属性如果放在同一个动画中，需要共享动画的开始时间、结束时间、Interpolator 等等一系列的设定，这样就不能有先后次序地执行动画了。这时候就需要使用<code>AnimatorSet</code>了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ObjectAnimator animator1 = ObjectAnimator.ofFloat(view, &quot;alpha&quot;, 0, 1);</span><br><span class="line">ObjectAnimator animator2 = ObjectAnimator.ofFloat(view, &quot;translationX&quot;, -200, 200);</span><br><span class="line">ObjectAnimator animator3 = ObjectAnimator.ofFloat(view, &quot;rotation&quot;, 0, 1080);</span><br><span class="line">animator3.setDuration(1000);</span><br><span class="line"></span><br><span class="line">AnimatorSet animatorSet = new AnimatorSet();</span><br><span class="line">// 用 AnimatorSet 的方法来让三个动画协作执行</span><br><span class="line">// 要求 1： animator1 先执行，animator2 在 animator1 完成后立即开始</span><br><span class="line">animatorSet.playSequentially(animator1,animator2);</span><br><span class="line">// 要求 2： animator2 和 animator3 同时开始</span><br><span class="line">animatorSet.playTogether(animator2, animator3);</span><br><span class="line"></span><br><span class="line">animatorSet.start();</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>playSequentially()</code>可以让传入的动画按顺序播放;</p>
+</li>
+<li><p><code>playTogether()</code>可以让传入的动画同时播放;</p>
+</li>
+<li><p>还可以使用 <code>AnimatorSet.play(animatorA).with/before/after(animatorB)</code>的方式来精确配置各个 Animator 之间的关系</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">animatorSet.play(animator1).with(animator2);    //同时</span><br><span class="line">animatorSet.play(animator1).before(animator2);  //之前</span><br><span class="line">animatorSet.play(animator1).after(animator2);   //之后</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="PropertyValuesHolders-ofKeyframe-把同一个属性拆分"><a href="#PropertyValuesHolders-ofKeyframe-把同一个属性拆分" class="headerlink" title="PropertyValuesHolders.ofKeyframe() 把同一个属性拆分"></a>PropertyValuesHolders.ofKeyframe() 把同一个属性拆分</h4><p>除了合并多个属性和调配多个动画，你还可以在 PropertyValuesHolder 的基础上更进一步，通过设置  Keyframe （关键帧），把同一个动画属性拆分成多个阶段。例如，你可以让一个进度增加到 100% 后再「反弹」回来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 在 0% 处开始</span><br><span class="line">Keyframe keyframe1 = Keyframe.ofFloat(0, 0);  </span><br><span class="line">// 时间经过 50% 的时候，动画完成度 100%</span><br><span class="line">Keyframe keyframe2 = Keyframe.ofFloat(0.5f, 100);  </span><br><span class="line">// 时间见过 100% 的时候，动画完成度倒退到 80%，即反弹 20%</span><br><span class="line">Keyframe keyframe3 = Keyframe.ofFloat(1, 80);  </span><br><span class="line">PropertyValuesHolder holder = PropertyValuesHolder.ofKeyframe(&quot;progress&quot;, keyframe1, keyframe2, keyframe3);</span><br><span class="line"></span><br><span class="line">ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(view, holder);  </span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure>
+<h3 id="ValueAnimator"><a href="#ValueAnimator" class="headerlink" title="ValueAnimator"></a>ValueAnimator</h3><p><code>ValueAnimator</code>是一个值的产生器,它并不直接作用于某个view,只是计算出动画过程中需要的属性值,来由我们灵活的使用:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ValueAnimator animator = ValueAnimator.ofInt(0, 100);</span><br><span class="line">animator.setDuration(300);</span><br><span class="line">animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">     @Override</span><br><span class="line">    public void onAnimationUpdate(ValueAnimator animation) &#123;</span><br><span class="line">        int animatedValue = (int) animation.getAnimatedValue();</span><br><span class="line">        view.setTranslationX(animatedValue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">animator.start();</span><br></pre></td></tr></table></figure></p>
+<p><code>ValueAnimator</code>的优点是更灵活,不像<code>ViewPropertyAnimator</code>只有固定几个方法,也不想<code>ObjectAnimator</code>必须依赖字段的set方法,<code>ValueAnimator</code>只生产动画过程中的属性值,其它都交给我们自己去实现.</p>
+<p><strong>参考</strong></p>
+<p><a href="http://hencoder.com/ui-1-6/" target="_blank" rel="noopener">HenCoder Android 自定义 View 1-6：属性动画 Property Animation（上手篇）</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/24/View的绘制流程/" rel="next" title="View的绘制流程">
+                <i class="fa fa-chevron-left"></i> View的绘制流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="信仰" />
+          <p class="site-author-name" itemprop="name">信仰</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xinyang123123" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github-alt"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://juejin.im/user/58398fc7128fe1006ab2b38d" target="_blank" title="掘金">
+                  
+                    <i class="fa fa-fw fa-rss"></i>
+                  
+                    
+                      掘金
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewPropertyAnimator"><span class="nav-number">1.1.</span> <span class="nav-text">ViewPropertyAnimator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ObjectAnimator"><span class="nav-number">1.2.</span> <span class="nav-text">ObjectAnimator</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolder-同一个动画中改变多个属性"><span class="nav-number">1.2.1.</span> <span class="nav-text">PropertyValuesHolder 同一个动画中改变多个属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AnimatorSet-多个动画配合执行"><span class="nav-number">1.2.2.</span> <span class="nav-text">AnimatorSet 多个动画配合执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolders-ofKeyframe-把同一个属性拆分"><span class="nav-number">1.2.3.</span> <span class="nav-text">PropertyValuesHolders.ofKeyframe() 把同一个属性拆分</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ValueAnimator"><span class="nav-number">1.3.</span> <span class="nav-text">ValueAnimator</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">信仰</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
