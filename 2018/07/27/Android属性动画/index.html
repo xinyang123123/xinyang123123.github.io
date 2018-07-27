@@ -109,7 +109,7 @@
 <meta property="og:site_name" content="XinYang Blog">
 <meta property="og:description" content="动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-27T07:18:59.461Z">
+<meta property="og:updated_time" content="2018-07-27T07:20:54.670Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android属性动画">
 <meta name="twitter:description" content="动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.">
@@ -380,7 +380,7 @@
 
       
         <p>动画效果在App开发中是不可或缺的重要内容,我们首选用3.0之后的属性动画来实现动画效果.<br><a id="more"></a></p>
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>顾名思义,属性动画就是通过改变View某些属性值而产生动画效果.通过设置好的目标值及动画时间等参数,系统会帮我们计算好某个时间对应的属性值,甚至在<code>ViewPropertyAnimator</code>和<code>ObjectAnimator</code>中会直接帮我们更新计算后的属性值.</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>顾名思义,属性动画就是通过改变View某些属性值而产生动画效果.通过设置好的目标值及动画时间等参数,系统会帮我们计算好某个时间对应的属性值,甚至在<code>ViewPropertyAnimator</code>和<code>ObjectAnimator</code>中会直接帮我们更新计算后的属性值.</p>
 <p>系统为我们提供了三种使用属性动画的API,分别是<code>ViewPropertyAnimator</code>,<code>ObjectAnimator</code>,<code>ValueAnimator</code>,从使用复杂度来说一种比一种复杂,但也更灵活.</p>
 <h3 id="ViewPropertyAnimator"><a href="#ViewPropertyAnimator" class="headerlink" title="ViewPropertyAnimator"></a>ViewPropertyAnimator</h3><p><code>ViewPropertyAnimator</code>的使用是最简单的,通过view自带的<code>animate()</code>来获取一个<code>ViewPropertyAnimator</code>对象来进行动画操作,代码如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">view.animate()</span><br><span class="line">    .alpha(1)   //透明度</span><br><span class="line">    .scaleX(1)  //x轴缩放比例</span><br><span class="line">    .scaleY(1)  //y轴缩放比例</span><br><span class="line">    .translationX(600)  //x轴平移距离</span><br><span class="line">    .translationY(600)  //y轴屏蔽距离</span><br><span class="line">    .rotation(360);     //旋转角度</span><br></pre></td></tr></table></figure>
@@ -612,7 +612,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewPropertyAnimator"><span class="nav-number">1.1.</span> <span class="nav-text">ViewPropertyAnimator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ObjectAnimator"><span class="nav-number">1.2.</span> <span class="nav-text">ObjectAnimator</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolder-同一个动画中改变多个属性"><span class="nav-number">1.2.1.</span> <span class="nav-text">PropertyValuesHolder 同一个动画中改变多个属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AnimatorSet-多个动画配合执行"><span class="nav-number">1.2.2.</span> <span class="nav-text">AnimatorSet 多个动画配合执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolders-ofKeyframe-把同一个属性拆分"><span class="nav-number">1.2.3.</span> <span class="nav-text">PropertyValuesHolders.ofKeyframe() 把同一个属性拆分</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ValueAnimator"><span class="nav-number">1.3.</span> <span class="nav-text">ValueAnimator</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewPropertyAnimator"><span class="nav-number">2.</span> <span class="nav-text">ViewPropertyAnimator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ObjectAnimator"><span class="nav-number">3.</span> <span class="nav-text">ObjectAnimator</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolder-同一个动画中改变多个属性"><span class="nav-number">3.1.</span> <span class="nav-text">PropertyValuesHolder 同一个动画中改变多个属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AnimatorSet-多个动画配合执行"><span class="nav-number">3.2.</span> <span class="nav-text">AnimatorSet 多个动画配合执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolders-ofKeyframe-把同一个属性拆分"><span class="nav-number">3.3.</span> <span class="nav-text">PropertyValuesHolders.ofKeyframe() 把同一个属性拆分</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ValueAnimator"><span class="nav-number">4.</span> <span class="nav-text">ValueAnimator</span></a></li></ol></div>
             
 
           </div>
