@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/title.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="前言在日常App开发中,难免有些功能是需要借助NDK来完成的,比如现在常见的音视频处理等,今天就以ffmpeg入手,来学习下Android NDK开发的套路. JNI和NDK很多人并不清除JNI和NDK的概念,经常搞混这两样东西,先来看看它们各自的定义吧.">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android中集成FFmpeg及NDK基础知识">
+<meta property="og:url" content="https://xinyang123123.github.io/blog/2018/08/16/Android中集成FFmpeg及NDK基础知识/index.html">
+<meta property="og:site_name" content="XinYang Blog">
+<meta property="og:description" content="前言在日常App开发中,难免有些功能是需要借助NDK来完成的,比如现在常见的音视频处理等,今天就以ffmpeg入手,来学习下Android NDK开发的套路. JNI和NDK很多人并不清除JNI和NDK的概念,经常搞混这两样东西,先来看看它们各自的定义吧.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/3/164fe6aa688897fb?w=527&h=299&f=png&s=16231">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/3/164ffef2e7693a2d?w=812&h=306&f=png&s=31146">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/4/16505a8dba6edb8d?w=822&h=214&f=png&s=15980">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/5/16505acfbe661204?w=1087&h=582&f=png&s=57341">
+<meta property="og:updated_time" content="2018-08-06T07:53:42.907Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android中集成FFmpeg及NDK基础知识">
+<meta name="twitter:description" content="前言在日常App开发中,难免有些功能是需要借助NDK来完成的,比如现在常见的音视频处理等,今天就以ffmpeg入手,来学习下Android NDK开发的套路. JNI和NDK很多人并不清除JNI和NDK的概念,经常搞混这两样东西,先来看看它们各自的定义吧.">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/8/3/164fe6aa688897fb?w=527&h=299&f=png&s=16231">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xinyang123123.github.io/blog/2018/08/16/Android中集成FFmpeg及NDK基础知识/"/>
+
+
+
+
+
+  <title>Android中集成FFmpeg及NDK基础知识 | XinYang Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">XinYang Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xinyang123123.github.io/blog/2018/08/16/Android中集成FFmpeg及NDK基础知识/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="信仰">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XinYang Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android中集成FFmpeg及NDK基础知识</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T15:42:30+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index">
+                    <span itemprop="name">code</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在日常App开发中,难免有些功能是需要借助NDK来完成的,比如现在常见的音视频处理等,今天就以ffmpeg入手,来学习下Android NDK开发的套路.</p>
+<h2 id="JNI和NDK"><a href="#JNI和NDK" class="headerlink" title="JNI和NDK"></a>JNI和NDK</h2><p>很多人并不清除JNI和NDK的概念,经常搞混这两样东西,先来看看它们各自的定义吧.<br><a id="more"></a></p>
+<h3 id="JNI"><a href="#JNI" class="headerlink" title="JNI"></a>JNI</h3><ul>
+<li><p><strong>是什么</strong>  </p>
+<p>   <code>JNI</code>是<code>Java Native Interface</code>的缩写，它提供了若干的API实现了Java和其他语言的通信(主要是C&amp;C++).</p>
+</li>
+<li><p><strong>设计目的</strong></p>
+<pre><code>标准的java类库不支持你的程序所需的特性。或者你已经有了一个用其他语言写成的库或程序，而你希望在java程序中使用它。或者是你需要一个高性能的库来完成一些操作.
+</code></pre></li>
+<li><p><strong>使用步骤</strong></p>
+<ol>
+<li>编写带有native声明的方法的java类</li>
+<li>使用javac命令编译所编写的java类</li>
+<li>然后使用javah + java类名生成扩展名为h的头文件</li>
+<li>使用C/C++实现本地方法</li>
+<li>将C/C++编写的文件<strong>生成动态连接库*</strong>(在Android中就是.so库)</li>
+<li>java代码中调用native方法</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/3/164fe6aa688897fb?w=527&amp;h=299&amp;f=png&amp;s=16231" alt="基本数据类型对应关系"></p>
+<h3 id="NDK"><a href="#NDK" class="headerlink" title="NDK"></a>NDK</h3><p><code>NDK</code>全称<code>Native Development Kit</code>，是Android的一个开发工具包,与Java并没有什么关系.</p>
+<p><code>NDK</code>的核心目的之一是让您将 C 和 C++ 源代码构建为可用于应用的共享库。嗯,就是它提供了交叉编译的功能.</p>
+<h4 id="CPU架构"><a href="#CPU架构" class="headerlink" title="CPU架构"></a>CPU架构</h4><p>我们都知道 CPU 是什么，那 CPU 架构到底是什么呢？回归到“架构”这个词本身含义，CPU 架构就是 CPU 的框架结构、设计方案，处理器厂商以某种架构为基础，生产自己的 CPU，就好比“总-分-总”是文章的一种架构，多篇文章可以都基于“总-分-总”架构。</p>
+<p>常见的 CPU 架构有 x86、x86-64 以及 arm 等， x86-64 其实也是基于 x86 架构，只是在 x86 的基础上做了一些扩展，以支持 64 位程序的应用，常见的 Intel 、AMD 处理器都是基于 x86 架构的。</p>
+<p>而 x86 架构主打的是 pc 端，对于移动端，arm 架构处于霸主地位 ，由于其体积小、低功耗、低成本、高性能的优点，被广泛应用在嵌入式系统中，目前大多数安卓、苹果手机的 CPU 都基于 arm 架构，此处所说的 arm 架构指 arm 系列架构，其中包括 ARMv5 、ARMv7 等等。</p>
+<p>最后再看 Android 端 ， Android 系统目前支持 ARMv5、ARMv7、ARMv8、 x86 、x86_64、MIPS 以及 MIPS64 共七种 CPU 架构，也就是说除此之外其他 CPU 架构的硬件并不能运行 Android 系统。</p>
+<h4 id="交叉编译"><a href="#交叉编译" class="headerlink" title="交叉编译"></a>交叉编译</h4><p>在某个平台上，编译该平台的可执行程序，叫做本地编译，比如在 Windows 平台上编译 Windows 自身的可执行程序；在 x86 平台上，编译 x86 平台自身的可执行程序。</p>
+<p>在某个平台上，编译另一种平台的可执行程序，就是交叉编译，比如在 x86 平台上，编译 arm 平台的可执行程序，这也是 Android 端使用最多的交叉编译类型。</p>
+<p>在交叉编译时，由于主机与目标的体系架构、环境不同，所以交叉编译比本地编译复杂很多，需要一些工具来解决主机与目标不同特性的问题，这些工具构成的工具集就叫做交叉编译链。</p>
+<p>既然交叉编译比本地复杂很多，那为什么不使用本地编译，比如在 arm 平台编译 arm 平台的可执行程序呢？这是因为目标平台存储空间和计算能力通常是有限的，而编译过程需要较大的存储空间和较快的计算能力，但目标平台无法提供。</p>
+<h2 id="项目中使用NDK"><a href="#项目中使用NDK" class="headerlink" title="项目中使用NDK"></a>项目中使用NDK</h2><p>这里可以查看一篇官方文档,中文,写的很详细:<a href="https://developer.android.google.cn/studio/projects/add-native-code" target="_blank" rel="noopener">向您的项目添加C和C++ 代码</a>,强烈建议认真阅读下这部分文档</p>
+<h3 id="CMake"><a href="#CMake" class="headerlink" title="CMake"></a>CMake</h3><p>NDK的构建有两种方式,一种是早期使用的<code>ndk-build</code>,一种是在Android Studio2.2之后推荐使用的<code>cmake</code>,我们今天只说推荐的<code>cmake</code>这种方式.</p>
+<h4 id="CMakeLists-txt的写法"><a href="#CMakeLists-txt的写法" class="headerlink" title="CMakeLists.txt的写法"></a>CMakeLists.txt的写法</h4><ul>
+<li><p><strong>add_library</strong> 使用指定的源文件将库添加到项目中</p>
+<ol>
+<li><p>普通库</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 添加普通库的语法</span><br><span class="line">add_library(&lt;name&gt; [STATIC | SHARED | MODULE]</span><br><span class="line">    [EXCLUDE_FROM_ALL]</span><br><span class="line">    [source1] [source2 ...])</span><br><span class="line">       </span><br><span class="line">// 创建ndk项目中默认生成的例子</span><br><span class="line">add_library( # Sets the name of the library.</span><br><span class="line">     native-lib</span><br><span class="line"></span><br><span class="line">     # Sets the library as a shared library.</span><br><span class="line">     SHARED</span><br><span class="line"></span><br><span class="line">     # Provides a relative path to your source file(s).</span><br><span class="line">     src/main/cpp/native-lib.cpp )</span><br></pre></td></tr></table></figure>
+<p> <code>name</code>属性没什么好说的,注意全局唯一就好.</p>
+<p> <code>[STATIC | SHARED | MODULE]</code>的话是生成的库的类型,<code>STATIC</code>的话生成的是静态库,也就是<code>.a</code>后缀的.我们一般用的都是<code>SHARED</code>生成动态链接库,也就是<code>.so</code>后缀的.</p>
+</li>
+<li><p>导入库</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 语法</span><br><span class="line">add_library(&lt;name&gt; &lt;SHARED|STATIC|MODULE|OBJECT|UNKNOWN&gt; IMPORTED</span><br><span class="line">    [GLOBAL])</span><br><span class="line">    </span><br><span class="line">// 导入编译好的ffmpeg样例    </span><br><span class="line">add_library( ffmpeg</span><br><span class="line">     SHARED</span><br><span class="line">     IMPORTED )</span><br><span class="line">     </span><br><span class="line">// 设置需要导入的ffmpeg位置</span><br><span class="line">set_target_properties( ffmpeg</span><br><span class="line">               PROPERTIES IMPORTED_LOCATION</span><br><span class="line">               ../../../../libs/armeabi-v7a/libffmpeg.so )</span><br></pre></td></tr></table></figure>
+<p> 这种方式可以把我们在外部编译好的.so库导进来</p>
+<p> 还有几种我也没用过了,可以参考官方文档看下<a href="https://cmake.org/cmake/help/latest/command/add_library.html" target="_blank" rel="noopener">add_library</a></p>
+</li>
+</ol>
+</li>
+<li><p><strong>include_directories</strong> 用来导入相关头文件</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include_directories(src/main/cpp)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>find_library</strong> 用来引入NDK中提供的库.<a href="https://developer.android.google.cn/ndk/guides/stable_apis#a3" target="_blank" rel="noopener"><br>Android NDK 原生 API</a></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">find_library(</span><br><span class="line">          # 定义存储NDK库位置的路径变量的名称。</span><br><span class="line">          log-lib</span><br><span class="line">          </span><br><span class="line">          # 指定CMake要查找的NDK库的名称。</span><br><span class="line">          log )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>target_link_libraries</strong> 将导入的库和自己的原生库关联起来</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">target_link_libraries( </span><br><span class="line">                   # 指定目标库。</span><br><span class="line">                   native-lib</span><br><span class="line">                   </span><br><span class="line">                   # 将目标库链接到NDK中包含的日志库。</span><br><span class="line">                   $&#123;log-lib&#125; )</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="FFmpeg"><a href="#FFmpeg" class="headerlink" title="FFmpeg"></a>FFmpeg</h2><p><code>FFmpeg</code>是一套可以用来记录、处理数字音频、视频，并将其转换为流的开源框架，采用LPL或GPL许可证，提供了录制、转换以及流化音视频的完整解决方案。名称中的mpeg来自视频编码标准<code>mpeg</code>,而前缀<code>FF</code>是<code>Fast Forward</code>的首字母缩写.音视频处理的开源库,可以完成绝大多数音视频相关的功能.很多知名软件,开源库都是基于它进行的二次开发,比如bilibi的<code>ijkPlayer</code>.</p>
+<p><a href="https://github.com/FFmpeg/FFmpeg" target="_blank" rel="noopener">GitHub链接</a></p>
+<h3 id="编译FFmpeg"><a href="#编译FFmpeg" class="headerlink" title="编译FFmpeg"></a>编译FFmpeg</h3><p><code>FFmpeg</code>与大部分GNU软件的编译方式类似,都是通过<code>configure</code>脚本来实现编译前的定制,这种方式允许用户在编译前对软件进行裁剪,同时通过对最终运行到的系统及目标平台的配置来决定对某些模块设定合适的配置.所以这里是通过<code>configure</code>的方式来生成<code>Makefile</code>文件,然后使用<code>make</code>和<code>make install</code>编译和安装.</p>
+<ol>
+<li><p><strong>配置环境</strong></p>
+<p> 首先我们需要先准备相关的编译环境,这里推荐在<code>linux</code>下进行编译,配置简单问题少.当然<code>Mac</code>也行,不推荐<code>Windows</code>.</p>
+<ol>
+<li><strong>Linux环境(Ubuntu 16.04)</strong>  <code>Windows</code>的话下载个<code>VMware Workstation</code>,装个<code>ubuntu</code>还是方便的.</li>
+<li><strong>NDK环境</strong> 这里使用的是ndk-r17,附上相关下载链接<a href="https://developer.android.google.cn/ndk/downloads/" target="_blank" rel="noopener">NDK 下载</a></li>
+<li><strong>下载FFmpeg源码</strong> <a href="https://ffmpeg.org/download.html#releases" target="_blank" rel="noopener">FFmpeg下载地址</a></li>
+</ol>
+</li>
+</ol>
+<ol start="2">
+<li><p><strong>修改configure文件</strong></p>
+<p> 由于FFmpeg默认生成的库文件格式为libavcodec.so.xx.xx.x。其中的xx就是主副版本号，这种格式在Ubuntu下使用是没有问题的，但是在Android下开发使用，并不把其作为有效的库文件。所以需要修改其他生成的文件名的格式。</p>
+<p> 通过修改configure文件要实现，打开configure，找到如下内容：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SLIBNAME_WITH_MAJOR=&apos;$(SLIBNAME).$(LIBMAJOR)&apos;  </span><br><span class="line">LIB_INSTALL_EXTRA_CMD=&apos;$$(RANLIB)&quot;$(LIBDIR)/$(LIBNAME)&quot;&apos;  </span><br><span class="line">SLIB_INSTALL_NAME=&apos;$(SLIBNAME_WITH_VERSION)&apos;  </span><br><span class="line">SLIB_INSTALL_LINKS=&apos;$(SLIBNAME_WITH_MAJOR)$(SLIBNAME)&apos;</span><br></pre></td></tr></table></figure>
+<p> 修改为:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SLIBNAME_WITH_MAJOR=&apos;$(SLIBPREF)$(FULLNAME)-$(LIBMAJOR)$(SLIBSUF)&apos;</span><br><span class="line">LIB_INSTALL_EXTRA_CMD=&apos;$$(RANLIB)&quot;$(LIBDIR)/$(LIBNAME)&quot;&apos;</span><br><span class="line">SLIB_INSTALL_NAME=&apos;$(SLIBNAME_WITH_MAJOR)&apos;</span><br><span class="line">SLIB_INSTALL_LINKS=&apos;$(SLIBNAME)&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>编写脚本文件</strong><br> 在<code>FFmpeg</code>根目录下创建<code>build.sh</code>脚本文件,来更方便的配置<code>configure</code>.如下:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash  </span><br><span class="line"># 配置NDK路径</span><br><span class="line">NDK=/home/xinyang/develop/android-ndk-r17</span><br><span class="line"># 指定了交叉编译环境,使其在编译过程中能够引用到 NDK 提供的原生标头和共享库文件</span><br><span class="line">SYSROOT=$NDK/platforms/android-23/arch-arm/</span><br><span class="line">TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64</span><br><span class="line"># 声明方法</span><br><span class="line">function build_one</span><br><span class="line">&#123;</span><br><span class="line">./configure \</span><br><span class="line">--prefix=$PREFIX \      # 设置输出路径</span><br><span class="line">--enable-shared \       # 打开动态库输出</span><br><span class="line">--disable-static \      # 关闭静态库输出</span><br><span class="line">--disable-doc \         # 关闭不需要的功能</span><br><span class="line">--disable-ffmpeg \</span><br><span class="line">--disable-ffplay \</span><br><span class="line">--disable-ffprobe \</span><br><span class="line">--disable-avdevice \</span><br><span class="line">--disable-symver \</span><br><span class="line">--cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \  # 指定交叉编译工具链 </span><br><span class="line">--target-os=linux \     # 目标系统 android基于linux 所以这里指定为linux</span><br><span class="line">--arch=armeabi-v7a \    # 目标平台架构</span><br><span class="line">--enable-cross-compile \# 开启交叉编译</span><br><span class="line">--sysroot=$SYSROOT \    # 交叉编译环境</span><br><span class="line">--extra-cflags=&quot;-Os -fpic $ADDI_CFLAGS&quot; \</span><br><span class="line">--extra-ldflags=&quot;$ADDI_LDFLAGS&quot; \</span><br><span class="line">$ADDITIONAL_CONFIGURE_FLAG</span><br><span class="line">make clean</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">&#125;</span><br><span class="line">CPU=armeabi-v7a</span><br><span class="line">PREFIX=$(pwd)/android/$CPU</span><br><span class="line">ADDI_CFLAGS=&quot;-marm&quot;</span><br><span class="line">build_one</span><br></pre></td></tr></table></figure>
+<p> <strong>–cross-prefix</strong> </p>
+<p> 类似于通配符方式指定 bin 目录下以 arm-linux-androideabi- 开头的交叉编译工具，假如不支持这种配置方式则需分别指定:</p>
+<ul>
+<li><strong>CC</strong>:$TOOLCHAIN/bin/arm-linux-androideabi-gcc       编译器,对C源文件进行编译处理,生成汇编文件.</li>
+<li><strong>CXX</strong>:$TOOLCHAIN/bin/arm-linux-androideabi-g++      </li>
+<li><strong>AR</strong>:$TOOLCHAIN/bin/arm-linux-androideabi-ar        打包器,用于库操作,可以通过该工具从一个库中删除或者增加目标代码模块.</li>
+<li><strong>LD</strong>:$TOOLCHAIN/bin/arm-linux-androideabi-ld        链接器,为前面生成的目标代码分配地址空间,将多个目标文件链接成一个库或是可执行文件.</li>
+</ul>
+</li>
+<li><p><strong>执行脚本</strong><br> cd 到ffmpeg目录下</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 build.sh</span><br></pre></td></tr></table></figure>
+<p> 首先修改下脚本文件的可执行权限</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./build.sh</span><br></pre></td></tr></table></figure>
+<p> 然后执行脚本,整个过程比较慢,耐心等待就好,整个过程大概需要5-10分钟.编译完成后就可以看到如下图,其中<code>include</code>中是一些头文件,<code>lib</code>中就是生成的.so动态库了</p>
+</li>
+</ol>
+<p><img src="https://user-gold-cdn.xitu.io/2018/8/3/164ffef2e7693a2d?w=812&amp;h=306&amp;f=png&amp;s=31146" alt=""></p>
+<h3 id="集成FFmpeg"><a href="#集成FFmpeg" class="headerlink" title="集成FFmpeg"></a>集成FFmpeg</h3><p>到这里就可以把生成的.so文件集成到我们的项目中了,来看看步骤:</p>
+<ol>
+<li>项目关联NDK,按这里的教程执行<a href="https://developer.android.google.cn/studio/projects/add-native-code" target="_blank" rel="noopener">向您的项目添加C和C++ 代码</a>;</li>
+<li>拷贝生成的.so文件到<code>libs</code>目录下(或是jniLibs);</li>
+<li>拷贝生成的<code>include</code>文件夹到<code>cpp</code>目录;</li>
+<li>拷贝<code>ffmpeg\fftools</code>目录下文件到cpp目录;</li>
+<li><p>编写<code>native</code>方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package com.xinyang.ndkdemo;</span><br><span class="line"></span><br><span class="line">public class FFmpegCmd &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">static &#123;</span><br><span class="line">    System.loadLibrary(&quot;ffmpeg&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public native static void handle();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>cpp</code>目录下创建<code>ffmpeg_cmd.c</code>文件,实现<code>native</code>方法,这里可以采用<code>javah</code>生成头文件再实现的方式,也可以直接在<code>java</code>类中使用快捷键提示,直接生成方法:</p>
+<p> <img src="https://user-gold-cdn.xitu.io/2018/8/4/16505a8dba6edb8d?w=822&amp;h=214&amp;f=png&amp;s=15980" alt=""></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">#include &lt;malloc.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;android/log.h&gt;</span><br><span class="line">#include &quot;ffmpeg/ffmpeg.h&quot;</span><br><span class="line"></span><br><span class="line">JNIEXPORT void  JNICALL Java_com_xinyang_ndkdemo_FFmpegCmd_handle</span><br><span class="line">(JNIEnv *env, jclass obj)&#123;</span><br><span class="line">    char info[40000] = &#123;0&#125;;</span><br><span class="line">    av_register_all();</span><br><span class="line">    AVCodec *c_temp = av_codec_next(NULL);</span><br><span class="line">    while(c_temp != NULL)&#123;</span><br><span class="line">        if(c_temp-&gt;decode!=NULL)&#123;</span><br><span class="line">            sprintf(info,&quot;%s[Dec]&quot;,info);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            sprintf(info,&quot;%s[Enc]&quot;,info);</span><br><span class="line">        &#125;</span><br><span class="line">        switch(c_temp-&gt;type)&#123;</span><br><span class="line">            case AVMEDIA_TYPE_VIDEO:</span><br><span class="line">                sprintf(info,&quot;%s[Video]&quot;,info);</span><br><span class="line">                break;</span><br><span class="line">            case AVMEDIA_TYPE_AUDIO:</span><br><span class="line">                sprintf(info,&quot;%s[Audio]&quot;,info);</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                sprintf(info,&quot;%s[Other]&quot;,info);</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        sprintf(info,&quot;%s[%10s]\n&quot;,info,c_temp-&gt;name);</span><br><span class="line">        c_temp=c_temp-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    __android_log_print(ANDROID_LOG_INFO,&quot;myTag&quot;,&quot;info:\n%s&quot;,info);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这段程序用于输出 FFmpeg 支持的编解码信息，通过 &lt; android/log.h &gt; 的 __android_log_print 方法可以直接将信息输出到 Android Studio 的 logcat 。</p>
+</li>
+<li><p>编辑<code>CMakeLists.txt</code>导入相关.so文件,使用<code>add_library</code>导入库的方式把生成的.so文件依次导入,使用<code>include_directories</code>导入头文件,最后再用<code>target_link_libraries</code>把导入的库和生成的目标库关联起来,如下所示:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"># For more information about using CMake with Android Studio, read the</span><br><span class="line"># documentation: https://d.android.com/studio/projects/add-native-code.html</span><br><span class="line"></span><br><span class="line"># Sets the minimum version of CMake required to build the native library.</span><br><span class="line"></span><br><span class="line">cmake_minimum_required(VERSION 3.4.1)</span><br><span class="line"></span><br><span class="line"># Creates and names a library, sets it as either STATIC</span><br><span class="line"># or SHARED, and provides the relative paths to its source code.</span><br><span class="line"># You can define multiple libraries, and CMake builds them for you.</span><br><span class="line"># Gradle automatically packages shared libraries with your APK.</span><br><span class="line"></span><br><span class="line">add_library( # Sets the name of the library.</span><br><span class="line">         ffmpeg</span><br><span class="line"></span><br><span class="line">         # Sets the library as a shared library.</span><br><span class="line">         SHARED</span><br><span class="line"></span><br><span class="line">         # Provides a relative path to your source file(s).</span><br><span class="line">         src/main/cpp/ffmpeg_cmd.c</span><br><span class="line">         src/main/cpp/ffmpeg/cmdutils.c</span><br><span class="line">         src/main/cpp/ffmpeg/ffmpeg.c</span><br><span class="line">         src/main/cpp/ffmpeg/ffmpeg_filter.c</span><br><span class="line">         src/main/cpp/ffmpeg/ffmpeg_opt.c</span><br><span class="line">          )</span><br><span class="line">include_directories(src/main/cpp)</span><br><span class="line">include_directories(src/main/cpp/include)</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    avutil-55</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( avutil-55</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libavutil-55.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    avcodec-57</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( avcodec-57</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libavcodec-57.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    avformat-57</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( avformat-57</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libavformat-57.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    avdevice-57</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( avdevice-57</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libavdevice-57.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    swresample-2</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( swresample-2</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libswresample-2.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    swscale-4</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( swscale-4</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libswscale-4.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    postproc-54</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( postproc-54</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libpostproc-54.so )</span><br><span class="line"></span><br><span class="line">add_library(</span><br><span class="line">    avfilter-6</span><br><span class="line">    SHARED</span><br><span class="line">    IMPORTED</span><br><span class="line">)</span><br><span class="line">set_target_properties( avfilter-6</span><br><span class="line">           PROPERTIES IMPORTED_LOCATION</span><br><span class="line">           ../../../../libs/armeabi-v7a/libavfilter-6.so )</span><br><span class="line"></span><br><span class="line"># Searches for a specified prebuilt library and stores the path as a</span><br><span class="line"># variable. Because CMake includes system libraries in the search path by</span><br><span class="line"># default, you only need to specify the name of the public NDK library</span><br><span class="line"># you want to add. CMake verifies that the library exists before</span><br><span class="line"># completing its build.</span><br><span class="line"></span><br><span class="line">find_library( # Sets the name of the path variable.</span><br><span class="line">          log-lib</span><br><span class="line"></span><br><span class="line">          # Specifies the name of the NDK library that</span><br><span class="line">          # you want CMake to locate.</span><br><span class="line">          log )</span><br><span class="line"></span><br><span class="line"># Specifies libraries CMake should link to your target library. You</span><br><span class="line"># can link multiple libraries, such as libraries you define in this</span><br><span class="line"># build script, prebuilt third-party libraries, or system libraries.</span><br><span class="line"></span><br><span class="line">target_link_libraries( # Specifies the target library.</span><br><span class="line">                    ffmpeg</span><br><span class="line">                    avutil-55</span><br><span class="line">                    avcodec-57</span><br><span class="line">                    avformat-57</span><br><span class="line">                    avdevice-57</span><br><span class="line">                    swresample-2</span><br><span class="line">                    swscale-4</span><br><span class="line">                    postproc-54</span><br><span class="line">                    avfilter-6</span><br><span class="line"></span><br><span class="line">                   # Links the target library to the log library</span><br><span class="line">                   # included in the NDK.</span><br><span class="line">                   $&#123;log-lib&#125; )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>试着调用<code>native</code>方法,在<code>logcat</code>中查看具体输出信息,如下:</p>
+<p> <img src="https://user-gold-cdn.xitu.io/2018/8/5/16505acfbe661204?w=1087&amp;h=582&amp;f=png&amp;s=57341" alt=""></p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说使用CMake方式还是比较简单的,编写<code>CMakeLists.txt</code>文件,在gradle中指定文件位置就好.重点在于相关库的交叉编译及编写调用相关api文件的C文件,这里就需要一些C的基础了.</p>
+<p><strong>参考</strong></p>
+<p><a href="https://blog.csdn.net/yhaolpz/article/details/76408829?locationNum=2&amp;fps=1" target="_blank" rel="noopener">Android 集成 FFmpeg (一) 基础知识及简单调用</a></p>
+<p><a href="https://developer.android.google.cn/studio/projects/add-native-code" target="_blank" rel="noopener">向您的项目添加 C 和 C++ 代码</a></p>
+<p><a href="https://github.com/xufuji456/FFmpegAndroid" target="_blank" rel="noopener">xufuji456/FFmpegAndroid</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/27/Android属性动画/" rel="next" title="Android属性动画">
+                <i class="fa fa-chevron-left"></i> Android属性动画
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="信仰" />
+          <p class="site-author-name" itemprop="name">信仰</p>
+           
+              <p class="site-description motion-element" itemprop="description">乘风破浪会有时</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xinyang123123" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github-alt"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://juejin.im/user/58398fc7128fe1006ab2b38d" target="_blank" title="掘金">
+                  
+                    <i class="fa fa-fw fa-rss"></i>
+                  
+                    
+                      掘金
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JNI和NDK"><span class="nav-number">2.</span> <span class="nav-text">JNI和NDK</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNI"><span class="nav-number">2.1.</span> <span class="nav-text">JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NDK"><span class="nav-number">2.2.</span> <span class="nav-text">NDK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU架构"><span class="nav-number">2.2.1.</span> <span class="nav-text">CPU架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#交叉编译"><span class="nav-number">2.2.2.</span> <span class="nav-text">交叉编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目中使用NDK"><span class="nav-number">3.</span> <span class="nav-text">项目中使用NDK</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CMake"><span class="nav-number">3.1.</span> <span class="nav-text">CMake</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CMakeLists-txt的写法"><span class="nav-number">3.1.1.</span> <span class="nav-text">CMakeLists.txt的写法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FFmpeg"><span class="nav-number">4.</span> <span class="nav-text">FFmpeg</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译FFmpeg"><span class="nav-number">4.1.</span> <span class="nav-text">编译FFmpeg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集成FFmpeg"><span class="nav-number">4.2.</span> <span class="nav-text">集成FFmpeg</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">信仰</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
